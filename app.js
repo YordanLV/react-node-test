@@ -1,10 +1,12 @@
+const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const fs = require('fs');
+const logger = require('morgan');
+const path = require('path');
 const readline = require('readline');
+
+const utils = require('./utils');
 
 const app = express();
 
@@ -18,29 +20,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-async function processLineByLine(page, page_size) {
-  const lineReader = require('readline').createInterface({
-  input: require('fs').createReadStream(__dirname+'/file.log'),
-  });
-  let lineCounter = page * page_size - page_size; 
-  const wantedLines = [];
-  lineReader.on('line', function (line) {
-    lineCounter++;
-    wantedLines.push(line);
-    if(lineCounter==page * page_size){lineReader.close();}
-  });
-  lineReader.on('close', function() {
-    console.log(wantedLines);
-    //  process.exit(0);
-  });
-}
 
 app.get('/logs', function (req, res) {
   const {page, page_size} = req.query;
-
+  let lineCounter = page * page_size - page_size; 
+  const wantedLines = [];
   res.setHeader('Content-Type', 'application/json');
-  processLineByLine(page, page_size);
-  res.end(JSON.stringify({ a: 1 }, null, 3));
+
+  const lineReader = readline.createInterface({
+    input: fs.createReadStream(__dirname+'/file.log'),
+  });
+
+  lineReader.on('line', function (line) {
+    lineCounter++;
+    wantedLines.push(utils.logFormatter(line));
+    if(lineCounter==page * page_size){lineReader.close();}
+  });
+
+  lineReader.on('close', function() {
+    res.end(JSON.stringify(wantedLines));
+  });
 })
 
 // catch 404 and forward to error handler

@@ -5,10 +5,14 @@ const fs = require('fs');
 const logger = require('morgan');
 const path = require('path');
 const readline = require('readline');
+const cors = require('cors');
 
 const utils = require('./utils');
 
 const app = express();
+
+app.use(cors());
+app.options('*', cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,22 +27,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/logs', function (req, res) {
   const {page, page_size} = req.query;
-  let lineCounter = page * page_size - page_size; 
-  const wantedLines = [];
-  res.setHeader('Content-Type', 'application/json');
-
+  
   const lineReader = readline.createInterface({
     input: fs.createReadStream(__dirname+'/file.log'),
   });
 
-  lineReader.on('line', function (line) {
-    lineCounter++;
-    wantedLines.push(utils.logFormatter(line));
-    if(lineCounter==page * page_size){lineReader.close();}
-  });
+  let lineNumber = 0;
+  const linesArray = [];
+  const startLine = page * page_size;
+  const endLine = page * page_size + Number(page_size);
 
+  lineReader.on('line', function(line) {
+    if (lineNumber >= startLine && lineNumber < (endLine)) {
+      linesArray.push(utils.logFormatter(line));
+    }
+    lineNumber++;
+  });
+  
+  res.setHeader('Content-Type', 'application/json');
   lineReader.on('close', function() {
-    res.end(JSON.stringify(wantedLines));
+    res.end(JSON.stringify(linesArray));
   });
 })
 

@@ -14,7 +14,7 @@ const reducer = (state = initialState, action) => {
     case 'FETCH_LOGS_SUCCESS':
       return {
         loading: false,
-        logs: action.payload,
+        logs: [...state.logs, ...action.payload],
         error: ''
       }
     case 'FETCH_LOGS_FAILURE':

@@ -1,13 +1,12 @@
 import axios from 'axios'
 
-export const fetchLogs = () => {
+export const fetchLogs = (page, page_Size) => {
   return (dispatch) => {
     dispatch(fetchLogsRequest())
     axios
-      .get('http://localhost:3005/logs?page=0&page_size=5')
+      .get(`http://localhost:3005/logs?page=${page}&page_size=${page_Size}`)
       .then(response => {
         const logs = response.data
-        console.log(logs);
         dispatch(fetchLogsSuccess(logs))
       })
       .catch(error => {

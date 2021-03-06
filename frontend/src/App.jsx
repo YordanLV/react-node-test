@@ -1,11 +1,15 @@
 import { Provider } from 'react-redux'
+
+import LogsContainer from './containers/logs'
+import Layout from './layout'
 import store from './store'
-import CountriesContainer from './containers/logs'
 
 function App() {
   return (
     <Provider store={store}>
-      <CountriesContainer />
+      <Layout>
+        <LogsContainer />
+      </Layout>
     </Provider>
   )
 }

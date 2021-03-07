@@ -1,15 +1,16 @@
 import { uid } from 'react-uid';
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
-import { useEffect, useState } from 'react'
 
-import Log from '../../component/log';
-import InfoCards from '../../component/infoCards'
 import { fetchLogs } from '../../actions/logs'
+import InfoCards from '../../component/infoCards'
+import Log from '../../component/log'
 
 const LogsContainer = () => {
   const page_size = 30;
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(0)
+  const [endOfPage, setEndOfPage] = useState(false)
 
   const loading = useSelector(state => state.logs.loading)
   const error = useSelector(state => state.logs.error)
@@ -22,13 +23,16 @@ const LogsContainer = () => {
 
   const nextPage = () => {
     dispatch(fetchLogs(page + 1, page_size))
-    setPage(page + 1);
+    setPage(page + 1)
   };
 
   const trackScrolling = () => {
     const wrappedElement = document.querySelector('body')
     if (isBottom(wrappedElement)) {
       nextPage();
+      setTimeout(() => {
+        setEndOfPage(true);
+      }, 500);
     }
   };
 
@@ -58,7 +62,11 @@ const LogsContainer = () => {
           const { date, logType, warningMessage } = log
           return <Log key={uid(log)} date={date} logType={logType} warningMessage={warningMessage} />
         })}
-        <div>{loading && "Loading..."}</div>
+        <div>
+          {loading ? "Loading..." : endOfPage && (
+            <div>=== End Of List ===</div>
+          )}
+        </div>
         <div>{error && error}</div>
       </div>
     </div>

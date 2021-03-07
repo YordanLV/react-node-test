@@ -1,9 +1,7 @@
 ### Stack
 
-React,
-Redux + Thunks (for statemanagment),
-Material UI + styled-components (styling),
-Axios (for fetching)
+Node.js + Express,
+
 
 ### `yarn start`
 

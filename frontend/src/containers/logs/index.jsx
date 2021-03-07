@@ -50,16 +50,16 @@ const LogsContainer = () => {
   return (
     <div>
       <h1>Logs</h1>
-      <InfoCards label="Warnings" number={totalWarnings} topPostion={0} />
-      <InfoCards label="Errors" number={totalErrors} topPostion={120} />
-      <InfoCards label="Infos" number={totalInfos} topPostion={240} />
+      <InfoCards label="Warnings" number={totalWarnings} topPostion={10} />
+      <InfoCards label="Errors" number={totalErrors} topPostion={130} />
+      <InfoCards label="Infos" number={totalInfos} topPostion={250} />
       <div>
         {logs.map(log => {
           const { date, logType, warningMessage } = log
           return <Log key={uid(log)} date={date} logType={logType} warningMessage={warningMessage} />
         })}
-        {loading && "Loading..."}
-        {error && "Error"}
+        <div>{loading && "Loading..."}</div>
+        <div>{error && error}</div>
       </div>
     </div>
   )

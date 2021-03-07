@@ -7,7 +7,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: black;
     color: #d1d1d1;
-    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
     font-size: 1rem;
     margin: 0;
     padding: 0;
